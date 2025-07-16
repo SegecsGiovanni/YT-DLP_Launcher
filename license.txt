@@ -1,0 +1,5 @@
+YT-DLP Automation License
+
+Copyright (c) 2025 Giovanni de Brito Segecs
+
+Este software é distribuído "como está", sem garantias de qualquer tipo...

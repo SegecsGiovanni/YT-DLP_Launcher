@@ -1,0 +1,4 @@
+yt-dlp
+tk
+PySide6
+PySimpleGUI
