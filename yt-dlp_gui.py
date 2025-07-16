@@ -37,7 +37,8 @@ def baixar():
     ydl_opts = {
         'restrictfilenames': True,
         'progress_hooks': [hook],
-        'outtmpl': '%(uploader)s/%(upload_date>%Y-%m)/%(title)s.%(ext)s'
+        # Removido o outtmpl que criava pastas por data. Fica para uma atualização futura.
+        # Agora o vídeo será baixado no diretório atual
     }
 
     if choice == 1:
@@ -62,26 +63,18 @@ def baixar():
         messagebox.showerror("Erro", str(e))
         return
 
-    # Move diretórios gerados
-    for folder in os.listdir('.'):
-        if os.path.isdir(folder):
-            moved = False
-            for root_dir, dirs, files in os.walk(folder):
-                for f in files:
-                    ext = os.path.splitext(f)[1][1:].lower()
-                    src_path = os.path.join(root_dir, f)
-                    if ext in audio_exts:
-                        dest = os.path.join(audio_folder, folder)
-                        os.makedirs(dest, exist_ok=True)
-                        shutil.move(src_path, dest)
-                        moved = True
-                    elif ext in video_exts:
-                        dest = os.path.join(video_folder, folder)
-                        os.makedirs(dest, exist_ok=True)
-                        shutil.move(src_path, dest)
-                        moved = True
-            if moved:
-                shutil.rmtree(folder)
+    # Move arquivos baixados para as pastas definidas
+    for file in os.listdir('.'):
+        if os.path.isfile(file):
+            ext = os.path.splitext(file)[1][1:].lower()
+            src_path = os.path.abspath(file)
+
+            if ext in audio_exts:
+                dest = os.path.join(audio_folder, file)
+                shutil.move(src_path, dest)
+            elif ext in video_exts:
+                dest = os.path.join(video_folder, file)
+                shutil.move(src_path, dest)
 
     messagebox.showinfo("Finalizado", "Download e organização concluídos.")
 
