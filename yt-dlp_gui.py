@@ -35,6 +35,7 @@ def baixar():
             messagebox.showinfo("Download", "Concluído.")
 
     ydl_opts = {
+        'ignoreconfig': True,
         'restrictfilenames': True,
         'progress_hooks': [hook],
         # Removido o outtmpl que criava pastas por data. Fica para uma atualização futura.
@@ -69,8 +70,20 @@ def baixar():
             ext = os.path.splitext(file)[1][1:].lower()
             src_path = os.path.abspath(file)
 
+            print(os.path.exists(audio_folder))  # Deve retornar True
+            print(os.access(audio_folder, os.W_OK))  # Verifica permissão de escrita
+
             if ext in audio_exts:
                 dest = os.path.join(audio_folder, file)
+                if not os.path.exists(dest):
+                    shutil.move(src_path, dest)
+                else:
+                    # Se o arquivo já existe, renomeia antes de mover
+                    base, extension = os.path.splitext(file)
+                    counter = 1
+                    while os.path.exists(dest):
+                        dest = os.path.join(audio_folder, f"{base}_{counter}{extension}")
+                        counter += 1
                 shutil.move(src_path, dest)
             elif ext in video_exts:
                 dest = os.path.join(video_folder, file)
