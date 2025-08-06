@@ -6,11 +6,11 @@ from tkinter import messagebox, ttk
 from yt_dlp import YoutubeDL
 import re
 from pathlib import Path
-from platformdirs import user_downloads_dir, user_videos_dir
+from platformdirs import user_music_dir, user_videos_dir
 
 # ====== CONFIGURAÇÕES ======
 
-audio_folder = Path(user_downloads_dir())
+audio_folder = Path(user_music_dir())
 video_folder = Path(user_videos_dir())
 
 audio_exts = ['mp3', 'wav', 'wma', 'flac', 'aac', 'm4a', 'ogg']
