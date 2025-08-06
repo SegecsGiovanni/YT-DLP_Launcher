@@ -5,23 +5,25 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from yt_dlp import YoutubeDL
 import re
+from pathlib import Path
+from platformdirs import user_download_dir, user_video_dir
 
 # ====== CONFIGURAÇÕES ======
 
-audio_folder = r'C:\Users\ADMIN\Downloads'
-video_folder = r'C:\Users\ADMIN\Videos'
+audio_folder = Path(user_download_dir())
+video_folder = Path(user_video_dir())
 
 audio_exts = ['mp3', 'wav', 'wma', 'flac', 'aac', 'm4a', 'ogg']
 video_exts = ['mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'mpg', 'mpeg']
 
-os.makedirs(audio_folder, exist_ok=True)
-os.makedirs(video_folder, exist_ok=True)
+audio_folder.mkdir(parents=True, exist_ok=True)
+video_folder.mkdir(parents=True, exist_ok=True)
 
-# ====== FUNÇÃO PARA LIMPAR PERCENTUAL E REMOVER ANSI (não mais usada para progresso) ======
+# ====== FUNÇÃO PARA LIMPAR PERCENTUAL E REMOVER ANSI ======
 
 def limpar_percent(s):
     s = re.sub(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])', '', s)  # remove ANSI
-    s = s.strip().replace('%','')
+    s = s.strip().replace('%', '')
     match = re.search(r'(\d+(\.\d+)?)', s)  # captura número com ou sem decimal
     return match.group(1) if match else '0.0'
 
@@ -59,14 +61,14 @@ def baixar():
         ydl_opts.update({
             'format': 'bestvideo+bestaudio',
             'merge_output_format': 'mp4',
-            'outtmpl': os.path.join(video_folder, '%(title)s.%(ext)s')
+            'outtmpl': str(video_folder / '%(title)s.%(ext)s')
         })
     elif choice == 2:
         ydl_opts.update({
             'format': 'bestaudio',
             'extract_audio': True,
             'audio_format': 'mp3',
-            'outtmpl': os.path.join(audio_folder, '%(title)s.%(ext)s')
+            'outtmpl': str(audio_folder / '%(title)s.%(ext)s')
         })
     else:
         messagebox.showerror("Erro", "Selecione o tipo de download.")
@@ -86,26 +88,26 @@ def baixar():
             src_path = os.path.abspath(file)
 
             if ext in audio_exts:
-                dest = os.path.join(audio_folder, file)
-                if not os.path.exists(dest):
+                dest = audio_folder / file
+                if not dest.exists():
                     shutil.move(src_path, dest)
                 else:
                     base, extension = os.path.splitext(file)
                     counter = 1
-                    while os.path.exists(dest):
-                        dest = os.path.join(audio_folder, f"{base}_{counter}{extension}")
+                    while (audio_folder / f"{base}_{counter}{extension}").exists():
                         counter += 1
+                    dest = audio_folder / f"{base}_{counter}{extension}"
                     shutil.move(src_path, dest)
             elif ext in video_exts:
-                dest = os.path.join(video_folder, file)
-                if not os.path.exists(dest):
+                dest = video_folder / file
+                if not dest.exists():
                     shutil.move(src_path, dest)
                 else:
                     base, extension = os.path.splitext(file)
                     counter = 1
-                    while os.path.exists(dest):
-                        dest = os.path.join(video_folder, f"{base}_{counter}{extension}")
+                    while (video_folder / f"{base}_{counter}{extension}").exists():
                         counter += 1
+                    dest = video_folder / f"{base}_{counter}{extension}"
                     shutil.move(src_path, dest)
 
     messagebox.showinfo("Finalizado", "Download e organização concluídos.")

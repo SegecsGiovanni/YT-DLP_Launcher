@@ -43,7 +43,7 @@ Rodar GUI
 Gerar Executável
     bash
         pyinstaller --onefile yt_dlp_downloader.py
-        pyinstaller --onefile --noconsole yt_dlp_downloader_gui.py
+        pyinstaller --onefile --noconsole yt-dlp_gui.py
 
 
 Criar Instalador
